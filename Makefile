@@ -38,7 +38,9 @@ fclean:
 	@sudo rm -rf ~/data/website/*
 
 logs:
-	@cd srcs
-	@docker-compose logs
+	@cd srcs && docker-compose logs
 
-.PHONY	: all build down re clean fclean logs
+ps:
+	@cd srcs && docker-compose ps
+
+.PHONY	: all build down re clean fclean logs ps

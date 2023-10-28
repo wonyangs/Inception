@@ -103,7 +103,7 @@ services:
     networks:
       - website
     volumes:
-      - web-volume:/var/www/mysite/staticfiles
+      - web-volume:/var/www/static
     healthcheck:
       test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost || exit 1"]
       interval: 30s
@@ -119,13 +119,14 @@ services:
     networks:
       - website
     volumes:
-      - web-volume:/var/www/static
+      - web-volume:/var/www/mysite/staticfiles
+    env_file:
+      - .env
     healthcheck:
       test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost:8000 || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
-
     restart: always
 
 volumes:
