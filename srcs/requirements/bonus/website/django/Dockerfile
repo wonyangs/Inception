@@ -1,10 +1,14 @@
 FROM alpine:3.17
 
+ARG DJANGO_SECRET_KEY \
+    DJANGO_DEBUG \
+    DATABASE_URL
+
 RUN apk add --no-cache python3 py3-pip && \
     pip3 install --upgrade pip && \
     pip3 install django
 
-RUN pip3 install tzdata
+RUN pip3 install tzdata django-environ
 
 COPY ./requirements/bonus/website/django/mysite /var/www/mysite
 

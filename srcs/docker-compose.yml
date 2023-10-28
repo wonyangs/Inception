@@ -32,6 +32,8 @@ services:
       - "3306:3306"
     networks:
       - inception
+    volumes:
+      - db-volume:/var/lib/mysql
     restart: always
 
   wordpress:
@@ -115,6 +117,10 @@ services:
     build:
       context: .
       dockerfile: requirements/bonus/website/django/Dockerfile
+      args:
+        DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
+        DJANGO_DEBUG: ${DJANGO_DEBUG}
+        DATABASE_URL: ${DATABASE_URL}
     container_name: website-django
     networks:
       - website
