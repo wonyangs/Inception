@@ -8,5 +8,7 @@ RUN pip3 install tzdata
 
 COPY ./requirements/bonus/website/django/mysite /var/www/mysite
 
+RUN python3 /var/www/mysite/manage.py collectstatic --no-input
+
 CMD ["python3", "/var/www/mysite/manage.py", "runserver", "0.0.0.0:8000"]
 
