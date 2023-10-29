@@ -4,12 +4,14 @@ all:
 	@printf "Launch configuration ${name}...\n"
 	@bash srcs/requirements/wordpress/tools/make_dir.sh
 	@bash srcs/requirements/bonus/website/django/tools/make_dir.sh
+	@bash srcs/requirements/bonus/portainer/tools/make_dir.sh
 	@docker-compose -f ./srcs/docker-compose.yml --env-file srcs/.env up -d
 
 build:
 	@printf "Building configuration ${name}...\n"
 	@bash srcs/requirements/wordpress/tools/make_dir.sh
 	@bash srcs/requirements/bonus/website/django/tools/make_dir.sh
+	@bash srcs/requirements/bonus/portainer/tools/make_dir.sh
 	@docker-compose -f ./srcs/docker-compose.yml --env-file srcs/.env up -d --build
 
 down:
@@ -18,6 +20,9 @@ down:
 
 re: down
 	@printf "Rebuild configuration ${name}...\n"
+	@bash srcs/requirements/wordpress/tools/make_dir.sh
+	@bash srcs/requirements/bonus/website/django/tools/make_dir.sh
+	@bash srcs/requirements/bonus/portainer/tools/make_dir.sh
 	@docker-compose -f ./srcs/docker-compose.yml --env-file srcs/.env up -d --build
 
 clean: down
@@ -26,6 +31,7 @@ clean: down
 	@sudo rm -rf ~/data/wordpress/*
 	@sudo rm -rf ~/data/mariadb/*
 	@sudo rm -rf ~/data/website/*
+	@sudo rm -rf ~/data/portainer/*
 
 fclean:
 	@printf "Total clean of all configurations docker\n"
@@ -36,6 +42,7 @@ fclean:
 	@sudo rm -rf ~/data/wordpress/*
 	@sudo rm -rf ~/data/mariadb/*
 	@sudo rm -rf ~/data/website/*
+	@sudo rm -rf ~/data/portainer/*
 
 logs:
 	@cd srcs && docker-compose logs

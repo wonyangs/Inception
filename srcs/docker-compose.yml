@@ -5,6 +5,7 @@ services:
     build:
       context: .
       dockerfile: requirements/nginx/Dockerfile
+    image: nginx
     container_name: nginx
     depends_on:
       - wordpress
@@ -32,6 +33,7 @@ services:
         DB_USER: ${DB_USER}
         DB_PASS: ${DB_PASS}
         DB_ROOT: ${DB_ROOT}
+    image: mariadb
     container_name: mariadb
     ports:
       - "3306:3306"
@@ -54,6 +56,7 @@ services:
         DB_NAME: ${DB_NAME}
         DB_USER: ${DB_USER}
         DB_PASS: ${DB_PASS}
+    image: wordpress
     container_name: wordpress
     depends_on:
       - mariadb
@@ -72,6 +75,7 @@ services:
     build:
       context: .
       dockerfile: requirements/bonus/redis/Dockerfile
+    image: redis
     container_name: redis
     ports:
       - "6379:6379"
@@ -91,6 +95,7 @@ services:
       args:
         FTP_USR: ${FTP_USR}
         FTP_PWD: ${FTP_PWD}
+    image: vsftpd
     container_name: vsftpd
     ports:
       - "21:21"
@@ -109,6 +114,7 @@ services:
     build:
       context: .
       dockerfile: requirements/bonus/adminer/Dockerfile
+    image: adminer
     container_name: adminer
     depends_on:
       - mariadb
@@ -127,11 +133,12 @@ services:
     build:
       context: .
       dockerfile: requirements/bonus/website/nginx/Dockerfile
-    ports:
-      - "5000:80"
+    image: website-nginx
     container_name: website-nginx
     depends_on:
       - website-django
+    ports:
+      - "5000:80"
     networks:
       - website
     volumes:
@@ -151,6 +158,7 @@ services:
         DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
         DJANGO_DEBUG: ${DJANGO_DEBUG}
         DATABASE_URL: ${DATABASE_URL}
+    image: website-django
     container_name: website-django
     networks:
       - website
@@ -160,6 +168,25 @@ services:
       - .env
     healthcheck:
       test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost:8000 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: always
+  
+  portainer:
+    build:
+      context: .
+      dockerfile: requirements/bonus/portainer/Dockerfile
+    image: portainer
+    container_name: portainer
+    ports:
+      - "8000:8000"
+      - "9443:9443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - pt-volume:/data
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-check-certificate --quiet https://localhost:9443/api/status || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -183,6 +210,12 @@ volumes:
       o: bind
       type: none
       device: /home/${USER}/data/website
+  
+  pt-volume:
+    driver_opts:
+      o: bind
+      type: none
+      device: /home/${USER}/data/portainer
 
 networks:
   inception:
