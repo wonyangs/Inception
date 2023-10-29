@@ -4,7 +4,7 @@ TOOLS = srcs/requirements/wordpress/tools/make_dir.sh \
 	srcs/requirements/bonus/website/django/tools/make_dir.sh \
 	srcs/requirements/bonus/portainer/tools/make_dir.sh
 
-all: env_file launch
+all: launch
 
 env_file:
 	@if [ ! -f ./srcs/.env ]; then \
