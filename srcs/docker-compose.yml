@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: requirements/nginx/Dockerfile
-    image: nginx
+    image: wonyang/nginx:1.0
     container_name: nginx
     depends_on:
       - wordpress
@@ -33,7 +33,7 @@ services:
         DB_USER: ${DB_USER}
         DB_PASS: ${DB_PASS}
         DB_ROOT: ${DB_ROOT}
-    image: mariadb
+    image: wonyang/mariadb:1.0
     container_name: mariadb
     ports:
       - "3306:3306"
@@ -56,7 +56,7 @@ services:
         DB_NAME: ${DB_NAME}
         DB_USER: ${DB_USER}
         DB_PASS: ${DB_PASS}
-    image: wordpress
+    image: wonyang/wordpress:1.0
     container_name: wordpress
     depends_on:
       - mariadb
@@ -75,7 +75,7 @@ services:
     build:
       context: .
       dockerfile: requirements/bonus/redis/Dockerfile
-    image: redis
+    image: wonyang/redis:1.0
     container_name: redis
     ports:
       - "6379:6379"
@@ -95,7 +95,7 @@ services:
       args:
         FTP_USR: ${FTP_USR}
         FTP_PWD: ${FTP_PWD}
-    image: vsftpd
+    image: wonyang/vsftpd:1.0
     container_name: vsftpd
     ports:
       - "21:21"
@@ -106,7 +106,7 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "echo 'QUIT' | nc localhost 21 | grep '220' || exit 1"]
       interval: 30s
-      timeout: 10s
+      timeout: 10s 
       retries: 3
     restart: always
 
@@ -114,7 +114,7 @@ services:
     build:
       context: .
       dockerfile: requirements/bonus/adminer/Dockerfile
-    image: adminer
+    image: wonyang/adminer:1.0
     container_name: adminer
     depends_on:
       - mariadb
@@ -133,7 +133,7 @@ services:
     build:
       context: .
       dockerfile: requirements/bonus/website/nginx/Dockerfile
-    image: website-nginx
+    image: wonyang/website-nginx:1.0
     container_name: website-nginx
     depends_on:
       - website-django
@@ -158,7 +158,7 @@ services:
         DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
         DJANGO_DEBUG: ${DJANGO_DEBUG}
         DATABASE_URL: ${DATABASE_URL}
-    image: website-django
+    image: wonyang/website-django:1.0
     container_name: website-django
     networks:
       - website
@@ -177,7 +177,7 @@ services:
     build:
       context: .
       dockerfile: requirements/bonus/portainer/Dockerfile
-    image: portainer
+    image: wonyang/portainer:1.0
     container_name: portainer
     ports:
       - "8000:8000"
