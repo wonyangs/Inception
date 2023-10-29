@@ -39,5 +39,8 @@ COPY ./requirements/wordpress/conf/wp-config-create.sh .
 RUN sh wp-config-create.sh && rm wp-config-create.sh && \
     chmod -R 0777 wp-content/
 
+RUN apk add --no-cache tini
+
+ENTRYPOINT ["/sbin/tini", "--"]
 CMD ["/usr/sbin/php-fpm81", "-F"]
 

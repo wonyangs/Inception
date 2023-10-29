@@ -14,5 +14,8 @@ COPY ./requirements/bonus/website/django/mysite /var/www/mysite
 
 RUN python3 /var/www/mysite/manage.py collectstatic --no-input
 
+RUN apk add --no-cache tini
+
+ENTRYPOINT ["/sbin/tini", "--"]
 CMD ["python3", "/var/www/mysite/manage.py", "runserver", "0.0.0.0:8000"]
 

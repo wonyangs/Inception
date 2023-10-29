@@ -8,4 +8,7 @@ RUN apk update && apk upgrade && \
 
 EXPOSE 6379
 
+RUN apk add --no-cache tini
+
+ENTRYPOINT ["/sbin/tini", "--"]
 CMD [ "redis-server" , "/etc/redis.conf" ]

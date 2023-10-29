@@ -23,4 +23,8 @@ WORKDIR /var/www
 
 EXPOSE 21
 
+RUN apk add --no-cache tini
+
+ENTRYPOINT ["/sbin/tini", "--"]
+
 CMD [ "/usr/sbin/vsftpd", "/etc/vsftpd/vsftpd.conf" ]

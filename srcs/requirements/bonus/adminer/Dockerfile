@@ -31,4 +31,7 @@ RUN wget https://github.com/vrana/adminer/releases/download/v4.8.1/adminer-4.8.1
 
 EXPOSE 8080
 
+RUN apk add --no-cache tini
+
+ENTRYPOINT ["/sbin/tini", "--"]
 CMD	[ "php", "-S", "[::]:8080", "-t", "/var/www" ]

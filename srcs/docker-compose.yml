@@ -16,6 +16,11 @@ services:
       - ./requirements/nginx/conf/:/etc/nginx/http.d/
       - ./requirements/nginx/tools:/etc/nginx/ssl/
       - wp-volume:/var/www/
+    healthcheck:
+      test: ["CMD-SHELL", "wget --no-check-certificate --quiet --tries=1 --spider https://localhost || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     restart: always
 
   mariadb:
@@ -34,6 +39,11 @@ services:
       - inception
     volumes:
       - db-volume:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     restart: always
 
   wordpress:
@@ -47,11 +57,16 @@ services:
     container_name: wordpress
     depends_on:
       - mariadb
-    restart: always
     networks:
       - inception
     volumes:
       - wp-volume:/var/www/
+    healthcheck:
+      test: ["CMD-SHELL", "pgrep php-fpm || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: always
 
   redis:
     build:
@@ -62,6 +77,11 @@ services:
       - "6379:6379"
     networks:
       - inception
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     restart: always
 
   vsftpd:
@@ -78,6 +98,11 @@ services:
       - wp-volume:/var/www/
     networks:
      - inception
+    healthcheck:
+      test: ["CMD-SHELL", "echo 'QUIT' | nc localhost 21 | grep '220' || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     restart: always
 
   adminer:
@@ -91,6 +116,11 @@ services:
       - "8080:8080"
     networks:
      - inception
+    healthcheck:
+      test: ["CMD-SHELL", "wget --quiet --tries=1 --spider http://localhost:8080 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
     restart: always
 
   website-nginx:
