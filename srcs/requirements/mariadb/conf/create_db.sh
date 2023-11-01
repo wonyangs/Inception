@@ -30,4 +30,3 @@ EOF
         /usr/bin/mysqld --user=mysql --initialize < /tmp/create_db.sql
         rm -f /tmp/create_db.sql
 fi
-
