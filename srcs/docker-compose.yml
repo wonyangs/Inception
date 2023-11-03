@@ -42,8 +42,6 @@ services:
     image: wonyang/mariadb:1.0
     init: true
     container_name: mariadb
-    ports:
-      - "3306:3306"
     networks:
       - inception
     volumes:
