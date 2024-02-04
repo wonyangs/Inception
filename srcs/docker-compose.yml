@@ -224,28 +224,28 @@ volumes:
     driver: local
     driver_opts:
       type: none
-      device: /home/wonyang/data/wordpress
+      device: /Users/wonyang/data/wordpress
       o: bind
 
   db-volume:
     driver: local
     driver_opts:
       type: none
-      device: /home/wonyang/data/mariadb
+      device: /Users/wonyang/data/mariadb
       o: bind
 
   web-volume:
     driver: local
     driver_opts:
       type: none
-      device: /home/wonyang/data/website
+      device: /Users/wonyang/data/website
       o: bind
   
   pt-volume:
     driver: local
     driver_opts:
       type: none
-      device: /home/wonyang/data/portainer
+      device: /Users/wonyang/data/portainer
       o: bind
 
 
