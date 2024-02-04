@@ -1,5 +1,7 @@
 FROM alpine:3.17
 
+LABEL author wonyang
+
 RUN apk add --no-cache \
   ca-certificates \
   wget \
@@ -8,7 +10,8 @@ RUN apk add --no-cache \
 RUN wget https://github.com/portainer/portainer/releases/download/2.11.1/portainer-2.11.1-linux-amd64.tar.gz && \
   tar xzf portainer-2.11.1-linux-amd64.tar.gz && \
   rm portainer-2.11.1-linux-amd64.tar.gz && \
-  chmod +x portainer/portainer
+  chmod +x portainer/portainer && \
+  mkdir /data
 
 EXPOSE 9443
 

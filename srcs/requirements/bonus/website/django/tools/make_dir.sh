@@ -1,8 +1,8 @@
 #!/bin/bash
-if [ ! -d "/home/${USER}/data" ]; then
+if [ ! -d "/home/wonyang/data" ]; then
         mkdir ~/data
 fi
 
-if [ ! -d "/home/${USER}/data/website" ]; then
+if [ ! -d "/home/wonyang/data/website" ]; then
 	mkdir ~/data/website
 fi

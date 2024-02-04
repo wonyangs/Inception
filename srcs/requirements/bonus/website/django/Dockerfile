@@ -1,5 +1,7 @@
 FROM alpine:3.17
 
+LABEL author wonyang
+
 ARG DJANGO_SECRET_KEY \
     DJANGO_DEBUG \
     DATABASE_URL
@@ -10,7 +12,7 @@ RUN apk add --no-cache python3 py3-pip && \
 
 RUN pip3 install tzdata django-environ
 
-COPY ./requirements/bonus/website/django/mysite /var/www/mysite
+COPY mysite /var/www/mysite
 
 RUN python3 /var/www/mysite/manage.py collectstatic --no-input
 

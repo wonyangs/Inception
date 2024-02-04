@@ -3,9 +3,10 @@ version: '3'
 services:
   nginx:
     build:
-      context: .
-      dockerfile: requirements/nginx/Dockerfile
-    image: wonyang/nginx:1.0
+      context: requirements/nginx
+      dockerfile: Dockerfile
+    image: nginx:inception
+    pull_policy: never
     init: true
     container_name: nginx
     depends_on:
@@ -22,7 +23,7 @@ services:
     volumes:
       - ./requirements/nginx/conf/:/etc/nginx/http.d/
       - ./requirements/nginx/tools:/etc/nginx/ssl/
-      - wp-volume:/var/www/
+      - wp-volume:/var/www/html
     healthcheck:
       test: ["CMD-SHELL", "wget --no-check-certificate --quiet --tries=1 --spider https://localhost || exit 1"]
       interval: 30s
@@ -32,14 +33,15 @@ services:
 
   mariadb:
     build:
-      context: .
-      dockerfile: requirements/mariadb/Dockerfile
+      context: requirements/mariadb
+      dockerfile: Dockerfile
       args:
         DB_NAME: ${DB_NAME}
         DB_USER: ${DB_USER}
         DB_PASS: ${DB_PASS}
         DB_ROOT: ${DB_ROOT}
-    image: wonyang/mariadb:1.0
+    image: mariadb:inception
+    pull_policy: never
     init: true
     container_name: mariadb
     networks:
@@ -55,23 +57,29 @@ services:
 
   wordpress:
     build:
-      context: .
-      dockerfile: requirements/wordpress/Dockerfile
+      context: requirements/wordpress
+      dockerfile: Dockerfile
       args:
         DB_NAME: ${DB_NAME}
         DB_USER: ${DB_USER}
         DB_PASS: ${DB_PASS}
-    image: wonyang/wordpress:1.0
+    image: wordpress:inception
+    pull_policy: never
     init: true
     container_name: wordpress
     depends_on:
       mariadb:
         condition: service_healthy
         restart: true
+      redis:
+        condition: service_healthy
+        restart: true
     networks:
       - inception
     volumes:
-      - wp-volume:/var/www/
+      - wp-volume:/var/www/html
+    env_file:
+      - .env
     healthcheck:
       test: ["CMD-SHELL", "pgrep php-fpm || exit 1"]
       interval: 30s
@@ -81,9 +89,12 @@ services:
 
   redis:
     build:
-      context: .
-      dockerfile: requirements/bonus/redis/Dockerfile
-    image: wonyang/redis:1.0
+      context: requirements/bonus/redis
+      dockerfile: Dockerfile
+      args:
+        RD_PASS: ${RD_PASS}
+    image: redis:inception
+    pull_policy: never
     init: true
     container_name: redis
     ports:
@@ -99,12 +110,13 @@ services:
 
   vsftpd:
     build:
-      context: .
-      dockerfile: requirements/bonus/vsftpd/Dockerfile
+      context: requirements/bonus/vsftpd
+      dockerfile: Dockerfile
       args:
         FTP_USR: ${FTP_USR}
         FTP_PWD: ${FTP_PWD}
-    image: wonyang/vsftpd:1.0
+    image: vsftpd:inception
+    pull_policy: never
     init: true
     container_name: vsftpd
     ports:
@@ -122,9 +134,10 @@ services:
 
   adminer:
     build:
-      context: .
-      dockerfile: requirements/bonus/adminer/Dockerfile
-    image: wonyang/adminer:1.0
+      context: requirements/bonus/adminer
+      dockerfile: Dockerfile
+    image: adminer:inception
+    pull_policy: never
     init: true
     container_name: adminer
     depends_on:
@@ -144,9 +157,10 @@ services:
 
   website-nginx:
     build:
-      context: .
-      dockerfile: requirements/bonus/website/nginx/Dockerfile
-    image: wonyang/website-nginx:1.0
+      context: requirements/bonus/website/nginx
+      dockerfile: Dockerfile
+    image: website-nginx:inception
+    pull_policy: never
     init: true
     container_name: website-nginx
     depends_on:
@@ -168,13 +182,14 @@ services:
 
   website-django:
     build:
-      context: .
-      dockerfile: requirements/bonus/website/django/Dockerfile
+      context: requirements/bonus/website/django
+      dockerfile: Dockerfile
       args:
         DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY}
         DJANGO_DEBUG: ${DJANGO_DEBUG}
         DATABASE_URL: ${DATABASE_URL}
-    image: wonyang/website-django:1.0
+    image: website-django:inception
+    pull_policy: never
     init: true
     container_name: website-django
     networks:
@@ -192,13 +207,13 @@ services:
   
   portainer:
     build:
-      context: .
-      dockerfile: requirements/bonus/portainer/Dockerfile
-    image: wonyang/portainer:1.0
+      context: requirements/bonus/portainer
+      dockerfile: Dockerfile
+    image: portainer:inception
+    pull_policy: never
     init: true
     container_name: portainer
     ports:
-      - "8000:8000"
       - "9443:9443"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
@@ -212,28 +227,33 @@ services:
 
 volumes:
   wp-volume:
+    driver: local
     driver_opts:
-      o: bind
       type: none
-      device: /home/${USER}/data/wordpress
+      device: /home/wonyang/data/wordpress
+      o: bind
 
   db-volume:
+    driver: local
     driver_opts:
-      o: bind
       type: none
-      device: /home/${USER}/data/mariadb
+      device: /home/wonyang/data/mariadb
+      o: bind
 
   web-volume:
+    driver: local
     driver_opts:
-      o: bind
       type: none
-      device: /home/${USER}/data/website
+      device: /home/wonyang/data/website
+      o: bind
   
   pt-volume:
+    driver: local
     driver_opts:
-      o: bind
       type: none
-      device: /home/${USER}/data/portainer
+      device: /home/wonyang/data/portainer
+      o: bind
+
 
 networks:
   inception:

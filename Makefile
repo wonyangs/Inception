@@ -1,10 +1,7 @@
 name = wonyang's inception
 DOCKER_COMPOSE = docker-compose -f ./srcs/docker-compose.yml --env-file srcs/.env
-TOOLS = srcs/requirements/wordpress/tools/make_dir.sh \
-	srcs/requirements/bonus/website/django/tools/make_dir.sh \
-	srcs/requirements/bonus/portainer/tools/make_dir.sh
 
-all: launch
+all: up
 
 env_file:
 	@if [ ! -f ./srcs/.env ]; then \
@@ -14,14 +11,17 @@ env_file:
 		done; \
 	fi
 
-launch: env_file
+diractory:
+	@bash srcs/requirements/wordpress/tools/make_dir.sh
+	@bash srcs/requirements/bonus/website/django/tools/make_dir.sh
+	@bash srcs/requirements/bonus/portainer/tools/make_dir.sh
+
+up: env_file diractory
 	@printf "Launch configuration $(name)..."
-	@bash $(TOOLS)
 	@$(DOCKER_COMPOSE) up -d
 
-build: env_file
+build: env_file diractory
 	@printf "Building configuration $(name)..."
-	@bash $(TOOLS)
 	@$(DOCKER_COMPOSE) up -d --build
 
 down: env_file
@@ -32,16 +32,12 @@ re: down build
 
 clean: down
 	@printf "Cleaning configuration $(name)..."
-	@docker system prune -a
-	@rm -rf ~/data/{wordpress,mariadb,website,portainer}/*
-	@rm -f ./srcs/.env
+	@docker system prune -a --volumes
 
 fclean:
 	@printf "Total clean of all configurations docker"
 	@docker stop $$(docker ps -qa)
 	@docker system prune --all --force --volumes
-	@docker network prune --force
-	@docker volume prune --force
 	@rm -rf ~/data/{wordpress,mariadb,website,portainer}/*
 	@rm -f ./srcs/.env
 
