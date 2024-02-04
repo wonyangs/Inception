@@ -12,10 +12,8 @@ services:
     depends_on:
       wordpress:
         condition: service_healthy
-        restart: true
       mariadb:
         condition: service_healthy
-        restart: true
     ports:
       - "443:443"
     networks:
@@ -70,10 +68,8 @@ services:
     depends_on:
       mariadb:
         condition: service_healthy
-        restart: true
       redis:
         condition: service_healthy
-        restart: true
     networks:
       - inception
     volumes:
@@ -143,7 +139,6 @@ services:
     depends_on:
       mariadb:
         condition: service_healthy
-        restart: true
     ports:
       - "8080:8080"
     networks:
@@ -166,7 +161,6 @@ services:
     depends_on:
       website-django:
         condition: service_healthy
-        restart: true
     ports:
       - "5000:80"
     networks:
